@@ -296,3 +296,17 @@ body, html {
 .tab-dropdown-item.delete-item {
     color: #d93025;
 }
+
+/* NEW: Size Selector styling */
+.size-dropdown {
+    padding: 6px 12px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #202124;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.95rem;
+    width: 100px;
+    margin-left: 10px;
+}

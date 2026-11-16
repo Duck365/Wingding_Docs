@@ -2,44 +2,11 @@
 let glitchIntensity = 'continuous';
 let lastGlitchChange = 0;
 
-// 1. Break the title into individual letters so we can target them
-const titleElement = document.getElementById('glitch-title');
-if (titleElement && !titleElement.hasAttribute('data-split')) {
-    const text = titleElement.innerText;
-    titleElement.innerHTML = ''; // Clear the original text
-    
-    for (let char of text) {
-        const span = document.createElement('span');
-        span.innerText = char;
-        titleElement.appendChild(span);
-    }
-    titleElement.setAttribute('data-split', 'true'); // Prevents running this loop twice
-}
-
 function updateGlitchEffect() {
     const glitchTitle = document.getElementById('glitch-title');
     if (!glitchTitle) return;
 
     const now = Date.now();
-    const letters = glitchTitle.querySelectorAll('span');
-    
-    // 2. Randomly pick ONE letter to glitch into Wingdings (about 15% chance every 100ms)
-    if (letters.length > 0 && Math.random() < 0.15) { 
-        const randomIdx = Math.floor(Math.random() * letters.length);
-        const targetLetter = letters[randomIdx];
-        
-        // Make sure it doesn't try to change the font of a blank space
-        if (targetLetter.innerText !== ' ') {
-            targetLetter.style.fontFamily = 'Wingdings';
-            
-            // Snap it back to the normal Courier font after a split second
-            setTimeout(() => {
-                targetLetter.style.fontFamily = "inherit";
-            }, 150);
-        }
-    }
-
-    // 3. Keep the main shaking animation running on the whole title
     if (glitchIntensity === 'continuous' && Math.random() < 0.1) {
         glitchIntensity = 'subtle';
         lastGlitchChange = now;
@@ -47,7 +14,6 @@ function updateGlitchEffect() {
     if (glitchIntensity === 'subtle' && (now - lastGlitchChange) > (500 + Math.random() * 500)) {
         glitchIntensity = 'continuous';
     }
-    
     if (glitchIntensity === 'subtle') {
         glitchTitle.style.animation = 'glitch-subtle 0.15s infinite';
     } else {
@@ -56,36 +22,14 @@ function updateGlitchEffect() {
 }
 setInterval(updateGlitchEffect, 100);
 
-// Just in case you didn't keep the style block from last time, here it is:
 const style = document.createElement('style');
 style.textContent = `
-    /* The reality-breaking, aggressive glitch */
-    @keyframes glitch-continuous {
-        0% { text-shadow: 3px 0 #ff0000, -3px 0 #00ffff; transform: translate(0) skew(0deg); clip-path: inset(10% 0 80% 0); }
-        10% { text-shadow: -5px 0 #ff0000, 4px 0 #00ffff; transform: translate(-5px, 2px) skew(-15deg); clip-path: inset(40% 0 43% 0); }
-        20% { text-shadow: 5px 0 #39ff14, -5px 0 #ff00ff; transform: translate(5px, -3px) skew(20deg); clip-path: inset(80% 0 5% 0); }
-        30% { text-shadow: -4px 0 #ff0000, 3px 0 #00ffff; transform: translate(0) skew(0deg); clip-path: inset(20% 0 50% 0); }
-        40% { text-shadow: 4px 3px #39ff14, -4px -3px #ff00ff; transform: translate(3px, 3px) skew(10deg); clip-path: inset(60% 0 10% 0); }
-        50% { text-shadow: -5px -3px #ff0000, 5px 3px #00ffff; transform: translate(-3px, -3px) skew(-10deg); clip-path: inset(15% 0 70% 0); }
-        60% { text-shadow: 3px 0 #39ff14, -3px 0 #ff00ff; transform: translate(5px, 0) skew(25deg); clip-path: inset(90% 0 0% 0); }
-        70% { text-shadow: -4px 0 #ff0000, 4px 0 #00ffff; transform: translate(-4px, 4px) skew(-20deg); clip-path: inset(30% 0 40% 0); }
-        80% { text-shadow: 5px -3px #39ff14, -5px 3px #ff00ff; transform: translate(3px, -5px) skew(15deg); clip-path: inset(5% 0 80% 0); }
-        90% { text-shadow: -3px 3px #ff0000, 3px -3px #00ffff; transform: translate(-5px, 0) skew(-25deg); clip-path: inset(50% 0 30% 0); }
-        100% { text-shadow: 3px 0 #39ff14, -3px 0 #ff00ff; transform: translate(0) skew(0deg); clip-path: inset(10% 0 80% 0); }
-    }
-
-    /* The "calm before the storm" subtle glitch */
     @keyframes glitch-subtle {
-        0%, 100% { text-shadow: 2px 0 #ff3333, -2px 0 #00ff00; transform: translate(0) skew(0deg); clip-path: inset(0 0 0 0); }
-        25% { transform: translate(1px, -1px) skew(2deg); }
-        50% { text-shadow: -2px 0 #ff3333, 2px 0 #00ff00; transform: translate(-1px, 1px) skew(-2deg); }
-        75% { transform: translate(-1px, -1px) skew(1deg); }
+        0%, 100% { text-shadow: 1px 0 #ff3333, -1px 0 #00ff00; transform: translate(0); }
+        50% { text-shadow: -1px 0 #ff3333, 1px 0 #00ff00; transform: translate(1px, 0); }
     }
 `;
-if (!document.querySelector('style[data-glitch]')) {
-    style.setAttribute('data-glitch', 'true');
-    document.head.appendChild(style);
-}
+document.head.appendChild(style);
 
 // ===== SCREEN NAVIGATION =====
 function showScreen(screenNum) {
@@ -93,9 +37,8 @@ function showScreen(screenNum) {
     document.getElementById(`screen-${screenNum}`).classList.add('active');
 }
 function goToScreen1() { showScreen(1); }
-function goToScreen2() { showScreen(2); }
 
-// Updated to know WHICH language you picked from the menu
+// Now jumps straight to editor!
 function goToEditor(mode) {
     showScreen(3);
     document.getElementById('font-selector').value = mode;
@@ -138,23 +81,10 @@ function renderTabs() {
 
 function toggleTabMenu(tabId, event) {
     event.stopPropagation();
-    
-    // Close all other menus first
     document.querySelectorAll('.tab-dropdown').forEach(menu => {
         if (menu.id !== `tab-menu-${tabId}`) menu.classList.remove('show');
     });
-    
     const menu = document.getElementById(`tab-menu-${tabId}`);
-    const btn = event.target;
-    
-    // THE FIX: Calculate exactly where the 3-dots button is on the screen
-    const rect = btn.getBoundingClientRect();
-    
-    // Force the menu to stick to the screen relative to the button, bypassing the overflow trap
-    menu.style.position = 'fixed';
-    menu.style.top = `${rect.bottom + 5}px`; // Drops it 5px below the button
-    menu.style.left = `${rect.left}px`;
-    
     menu.classList.toggle('show');
 }
 
@@ -176,8 +106,15 @@ function changeTabEmoji(tabId, event) {
     event.stopPropagation();
     const doc = documents.find(d => d.id === tabId);
     const newEmoji = prompt("Paste an emoji for this tab:", doc.emoji || "📄");
+    
     if (newEmoji !== null && newEmoji.trim() !== '') {
-        doc.emoji = newEmoji.trim();
+        const cleanEmoji = newEmoji.trim();
+        // Check if the user just typed standard letters or numbers instead of an emoji
+        if (/^[a-zA-Z0-9]+$/.test(cleanEmoji)) {
+            alert("Oops! Please paste an actual emoji or symbol, not standard text.");
+            return;
+        }
+        doc.emoji = cleanEmoji;
         renderTabs();
     }
 }
@@ -233,19 +170,38 @@ function saveCurrentTab() {
 // ===== FONT HIGHLIGHTING / RICH TEXT =====
 let savedRange = null;
 
+// This listener auto-updates the toolbar when you click inside the document!
 document.addEventListener('selectionchange', () => {
     const selection = window.getSelection();
     const editor = document.getElementById('editor-content');
     
     if (selection.rangeCount > 0 && document.activeElement === editor) {
         savedRange = selection.getRangeAt(0);
+        
+        // 1. Detect the font at the cursor and update the dropdown
+        let currentFont = document.queryCommandValue('fontName');
+        if (currentFont) {
+            currentFont = currentFont.replace(/['"]/g, ''); // Clean up quotes
+            const fontDropdown = document.getElementById('font-selector');
+            for(let i = 0; i < fontDropdown.options.length; i++) {
+                if(fontDropdown.options[i].value.replace(/['"]/g, '').toLowerCase() === currentFont.toLowerCase()) {
+                    fontDropdown.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        // 2. Detect the size at the cursor and update the dropdown
+        let currentSize = document.queryCommandValue('fontSize');
+        if (currentSize) {
+            document.getElementById('size-selector').value = currentSize;
+        }
     }
 });
 
 function applyFont() {
     const fontSelector = document.getElementById('font-selector');
     const editor = document.getElementById('editor-content');
-    
     editor.focus();
     
     if (savedRange) {
@@ -254,12 +210,26 @@ function applyFont() {
         selection.addRange(savedRange);
     }
     
-    // If it is our custom language, switch to Arial so the shapes render perfectly
-    if (fontSelector.value === 'Simple Uni-Shapes') {
+    if (fontSelector.value === 'Simple Uni-Shapes' || fontSelector.value === 'Emojin') {
         document.execCommand('fontName', false, 'Arial');
     } else {
         document.execCommand('fontName', false, fontSelector.value);
     }
+}
+
+// NEW: Function to apply text size
+function applySize() {
+    const sizeSelector = document.getElementById('size-selector');
+    const editor = document.getElementById('editor-content');
+    editor.focus();
+    
+    if (savedRange) {
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(savedRange);
+    }
+    
+    document.execCommand('fontSize', false, sizeSelector.value);
 }
 
 // ===== IMPORT/EXPORT MODAL =====
@@ -304,15 +274,11 @@ function downloadTXT(filename) {
 }
 
 function downloadPDF(filename) {
-    // 1. THE FIX: We add a "Font Stack". If Arial doesn't have the shape, 
-    // it moves down the list to Apple Emoji, then Windows Emoji, etc., until it finds it!
     const fontStack = "'Arial', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif";
-    
     let htmlContent = `<div style="font-family: ${fontStack}; padding: 20px; color: #000000; background-color: #ffffff;">`;
     
     documents.forEach((doc, index) => {
         htmlContent += `<h2>${doc.emoji || '📄'} ${doc.name}</h2>`;
-        // Added white-space: pre-wrap so your spaces and line breaks export perfectly too!
         htmlContent += `<div style="color: #000000; white-space: pre-wrap; word-wrap: break-word;">${doc.content}</div>`;
         if (index < documents.length - 1) htmlContent += '<hr style="margin: 30px 0;">';
     });
@@ -322,12 +288,9 @@ function downloadPDF(filename) {
         margin: 10,
         filename: `${filename}.pdf`,
         image: { type: 'jpeg', quality: 1 },
-        // 2. THE FIX: We turn on 'letterRendering' and 'useCORS' to force the canvas engine 
-        // to draw complex Unicode shapes as exact images before making the PDF.
-        html2canvas: { scale: 2, useCORS: true, letterRendering: true }, 
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
         jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
     };
-    
     html2pdf().set(opt).from(htmlContent).save();
 }
 

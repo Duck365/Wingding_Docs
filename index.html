@@ -4,48 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wingding Typer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Aldrich&family=Anton&family=Atomic+Age&family=Audiowide&family=Average&family=Permanent+Marker&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- Removed Atomic Age, Average, and Press Start 2P -->
+    <link href="https://fonts.googleapis.com/css2?family=Aldrich&family=Anton&family=Audiowide&family=Permanent+Marker&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- Screen 1: Main Menu -->
     <div id="screen-1" class="screen active">
         <div class="menu-container">
             <h1 id="glitch-title" class="glitch-title">WINGDING TYPER</h1>
-            <button class="main-btn" onclick="goToScreen2()">+ Create new Wingding_typer document</button>
+            <!-- Jumps straight to Editor, defaulting to Wingdings -->
+            <button class="main-btn" onclick="goToEditor('Wingdings')">+ Create new Wingding_typer document</button>
         </div>
     </div>
 
-    <div id="screen-2" class="screen">
-        <div class="menu-container">
-            <button class="back-btn-menu" onclick="goToScreen1()">⬅ Back</button>
-            <p class="menu-prompt">What form of wingdings do you want to type in?</p>
-            <button class="main-btn" onclick="goToEditor('Wingdings')">Standard Wingdings</button>
-            <button class="main-btn" onclick="goToEditor('Simple Uni-Shapes')">Simple Uni-Shapes</button>
-            <button class="main-btn" onclick="goToEditor('Emojin')">Emojin</button>
-        </div>
-    </div>
-
+    <!-- Screen 3: Document Editor -->
     <div id="screen-3" class="screen editor-screen">
         
+        <!-- Top Toolbar -->
         <div class="top-toolbar">
             <div class="toolbar-left">
                 <button class="toolbar-btn back-btn-editor" onclick="goToScreen1()">⬅ Menu</button>
             </div>
             <div class="toolbar-center">
+                <!-- Font Dropdown -->
                 <select id="font-selector" class="font-dropdown" onchange="applyFont()">
                     <option value="Wingdings">Standard Wingdings</option>
                     <option value="Simple Uni-Shapes">Simple Uni-Shapes</option>
                     <option value="Emojin">Emojin</option>
                     <option value="Arial">Arial</option>
                     <option value="Comic Sans MS">Comic Sans MS</option>
-                    <option value="Atomic Age">Atomic Age</option>
                     <option value="Audiowide">Audiowide</option>
                     <option value="Aldrich">Aldrich</option>
                     <option value="Anton">Anton</option>
-                    <option value="Average">Average</option>
                     <option value="'Permanent Marker'">Permanent Marker</option>
-                    <option value="'Press Start 2P'">Press Start 2P</option>
+                </select>
+                
+                <!-- NEW: Size Dropdown -->
+                <select id="size-selector" class="size-dropdown" onchange="applySize()">
+                    <option value="1">Small</option>
+                    <option value="3" selected>Normal</option>
+                    <option value="5">Large</option>
+                    <option value="7">Huge</option>
                 </select>
             </div>
             <div class="toolbar-right">
@@ -53,16 +54,19 @@
             </div>
         </div>
 
+        <!-- Tab Bar -->
         <div class="tab-bar">
             <div class="tabs-list" id="tabs-list"></div>
             <button class="add-tab-btn" onclick="addTab()" title="Add new tab">+</button>
         </div>
 
+        <!-- Main Editor Area -->
         <div class="editor-background">
             <div id="editor-content" class="document-page" contenteditable="true" spellcheck="false" placeholder="Start typing..."></div>
         </div>
     </div>
 
+    <!-- Import/Export Modal -->
     <div id="import-export-modal" class="modal hidden">
         <div class="modal-content">
             <button class="close-btn" onclick="closeImportExportModal()">&times;</button>
